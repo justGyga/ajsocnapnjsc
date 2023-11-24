@@ -106,12 +106,12 @@ const minerInfoTable = (data) => {
                         width: { size: 100, type: WidthType.PERCENTAGE }
                     }),
                     new TableCell({
-                        children: cellPhotoContent({ path: "./example.jpg", name: "Photo 1" }),
+                        children: cellPhotoContent(data.photos[0]),
                         rowSpan: 4,
                         verticalAlign: VerticalAlign.CENTER
                     }),
                     new TableCell({
-                        children: cellPhotoContent({ path: "./example.jpg", name: "Photo 2" }),
+                        children: cellPhotoContent(data.photos[1]),
                         rowSpan: 4,
                         verticalAlign: VerticalAlign.CENTER
                     })
@@ -148,12 +148,12 @@ const minerInfoTable = (data) => {
                         verticalAlign: VerticalAlign.CENTER
                     }),
                     new TableCell({
-                        children: cellPhotoContent({ path: "./example.jpg", name: "Photo 3" }),
+                        children: cellPhotoContent(data.photos[2]),
                         rowSpan: 3,
                         verticalAlign: VerticalAlign.CENTER
                     }),
                     new TableCell({
-                        children: cellPhotoContent({ path: "./example.jpg", name: "Photo 4" }),
+                        children: cellPhotoContent(data.photos[3]),
                         rowSpan: 3,
                         verticalAlign: VerticalAlign.CENTER
                     })
