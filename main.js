@@ -4,9 +4,9 @@ import {
     Document,
     Footer,
     HeightRule,
-    HorizontalPositionAlign,
     ImageRun,
     Packer,
+    PageNumber,
     Paragraph,
     Table,
     TableCell,
@@ -16,9 +16,11 @@ import {
     WidthType
 } from "docx";
 import { readFileSync, writeFileSync } from "fs";
+import pageContent from "./content.js";
 
 const header = new Paragraph({
     alignment: AlignmentType.RIGHT,
+    pageBreakBefore: true,
     children: [
         new ImageRun({
             data: readFileSync("./logo.png"),
@@ -99,7 +101,7 @@ const minerInfoTable = (data) => {
             new TableRow({
                 children: [
                     new TableCell({
-                        children: [cellName(`Miner №${data.miner.id}`)],
+                        children: [cellName(`Miner №${data.id}`)],
                         verticalAlign: VerticalAlign.CENTER,
                         width: { size: 100, type: WidthType.PERCENTAGE }
                     }),
@@ -118,7 +120,7 @@ const minerInfoTable = (data) => {
             new TableRow({
                 children: [
                     new TableCell({
-                        children: [cellName("Serial Number"), new Paragraph(data.miner.serialNumber)],
+                        children: [cellName("Serial Number"), new Paragraph(data.serialNumber)],
                         verticalAlign: VerticalAlign.CENTER
                     })
                 ]
@@ -126,7 +128,7 @@ const minerInfoTable = (data) => {
             new TableRow({
                 children: [
                     new TableCell({
-                        children: [cellName("MAC-Address"), new Paragraph(data.miner.mac)],
+                        children: [cellName("MAC-Address"), new Paragraph(data.mac)],
                         verticalAlign: VerticalAlign.CENTER
                     })
                 ]
@@ -134,7 +136,7 @@ const minerInfoTable = (data) => {
             new TableRow({
                 children: [
                     new TableCell({
-                        children: [cellName("Model"), new Paragraph(data.miner.model)],
+                        children: [cellName("Model"), new Paragraph(data.model)],
                         verticalAlign: VerticalAlign.CENTER
                     })
                 ]
@@ -142,7 +144,7 @@ const minerInfoTable = (data) => {
             new TableRow({
                 children: [
                     new TableCell({
-                        children: [cellName("Task"), new Paragraph(data.miner.task)],
+                        children: [cellName("Task"), new Paragraph(data.task)],
                         verticalAlign: VerticalAlign.CENTER
                     }),
                     new TableCell({
@@ -185,48 +187,62 @@ const workPerformedTableContentRow = (content) => {
     });
 };
 
-const workPerformedTable = new Table({
-    rows: [
-        // Titling Row
-        new TableRow({
-            tableHeader: true,
-            children: [
-                new TableCell({
-                    children: [columnName("Testing work")],
-                    verticalAlign: VerticalAlign.CENTER
-                }),
-                new TableCell({
-                    children: [columnName("Repair work")],
-                    verticalAlign: VerticalAlign.CENTER
-                })
-            ],
-            height: {
-                value: 500,
-                rule: HeightRule.ATLEAST
-            }
-        }),
-        // Content
-        workPerformedTableContentRow({ test: "Test", repair: "Repair" }),
-        workPerformedTableContentRow({ test: "Test", repair: "Repair" }),
-        workPerformedTableContentRow({ test: "Test", repair: "Repair" }),
-        workPerformedTableContentRow({ test: "Test", repair: "Repair" })
-    ],
-    width: {
-        size: 100,
-        type: WidthType.PERCENTAGE
-    },
-    borders
-});
+const workPerformedTable = (content) => {
+    return new Table({
+        rows: [
+            // Titling Row
+            new TableRow({
+                tableHeader: true,
+                children: [
+                    new TableCell({
+                        children: [columnName("Testing work")],
+                        verticalAlign: VerticalAlign.CENTER
+                    }),
+                    new TableCell({
+                        children: [columnName("Repair work")],
+                        verticalAlign: VerticalAlign.CENTER
+                    })
+                ],
+                height: {
+                    value: 500,
+                    rule: HeightRule.ATLEAST
+                }
+            }),
+            // Content
+            ...content.map(({ test, repair }) => workPerformedTableContentRow({ test, repair }))
+        ],
+        width: {
+            size: 100,
+            type: WidthType.PERCENTAGE
+        },
+        borders
+    });
+};
 
-const minerData = { miner: { id: 1, serialNumber: "Some Serial Number", mac: "AA-AA-AA", model: "SOme model 1", task: "WORK BEACH" } };
+const pageComponents = (content) => {
+    return [header, sectionName("Miner Information"), minerInfoTable(content.minerData), sectionName("Work Performed"), workPerformedTable(content.tests)];
+};
 
 const doc = new Document({
     sections: [
         {
-            children: [header, sectionName("Miner Information"), minerInfoTable(minerData), sectionName("Work Performed"), workPerformedTable],
+            children: [...pageContent.map((pageData) => pageComponents(pageData))].flat(),
             footers: {
                 default: new Footer({
-                    children: [sectionName("Confidential | AiPROENERGY LLC", { color: "#b4b4b4" })]
+                    children: [
+                        sectionName("Confidential | AiPROENERGY LLC", { color: "#b4b4b4" }),
+                        new Paragraph({
+                            alignment: AlignmentType.RIGHT,
+                            children: [
+                                new TextRun({
+                                    children: ["Page ", PageNumber.CURRENT],
+                                    font: "Times New Roman",
+                                    size: "12pt",
+                                    color: "#b4b4b4"
+                                })
+                            ]
+                        })
+                    ]
                 })
             }
         }
