@@ -1,0 +1,33 @@
+{
+  "name": "docs-for-node-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "node ."
+  },
+  "dependencies": {
+    "docx": "^8.2.2",
+    "docx-merger": "^1.2.2",
+    "mongoose": "^7.0.5",
+    "swagger-jsdoc": "^6.2.7",
+    "swagger-ui-express": "^4.6.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "eslint": "^8.34.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "libreoffice-convert": "^1.4.1",
+    "prettier": "2.8.4",
+    "prettier-plugin-organize-imports": "^3.2.2"
+  },
+  "nodemonConfig": {
+    "ext": "js, json, yml, yaml"
+  }
+}
