@@ -4,6 +4,7 @@ import {
     Document,
     Footer,
     HeightRule,
+    HorizontalPositionAlign,
     ImageRun,
     Packer,
     Paragraph,
@@ -17,20 +18,24 @@ import {
 import { readFileSync, writeFileSync } from "fs";
 
 const header = new Paragraph({
+    alignment: AlignmentType.RIGHT,
     children: [
         new ImageRun({
-            alignment: AlignmentType.LEFT,
             data: readFileSync("./logo.png"),
             transformation: {
                 width: 187.75,
                 height: 25.75
+            },
+            floating: {
+                horizontalPosition: {
+                    offset: 914400
+                },
+                verticalPosition: {
+                    offset: 864400
+                }
             }
         }),
         new TextRun({
-            text: "\t\t\t\t\t"
-        }),
-        new TextRun({
-            alignment: AlignmentType.RIGHT,
             text: "Mining Services LLC",
             bold: true,
             size: "16pt",
