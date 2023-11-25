@@ -6,6 +6,7 @@ import {
     HeightRule,
     ImageRun,
     Packer,
+    PageBreak,
     PageNumber,
     Paragraph,
     Table,
@@ -20,7 +21,6 @@ import pageContent from "./content.js";
 
 const header = new Paragraph({
     alignment: AlignmentType.RIGHT,
-    pageBreakBefore: true,
     children: [
         new ImageRun({
             data: readFileSync("./logo.png"),
@@ -204,7 +204,7 @@ const workPerformedTable = (content) => {
                     })
                 ],
                 height: {
-                    value: 500,
+                    value: 450,
                     rule: HeightRule.ATLEAST
                 }
             }),
@@ -219,14 +219,24 @@ const workPerformedTable = (content) => {
     });
 };
 
-const pageComponents = (content) => {
-    return [header, sectionName("Miner Information"), minerInfoTable(content.minerData), sectionName("Work Performed"), workPerformedTable(content.tests)];
+const pageComponents = (content, isLast) => {
+    const components = [
+        header,
+        sectionName("Miner Information"),
+        minerInfoTable(content.minerData),
+        sectionName("Work Performed"),
+        workPerformedTable(content.tests)
+    ];
+    if (!isLast) {
+        components.push(new Paragraph({ children: [new PageBreak()] }));
+    }
+    return components;
 };
 
 const doc = new Document({
     sections: [
         {
-            children: [...pageContent.map((pageData) => pageComponents(pageData))].flat(),
+            children: [...pageContent.map((pageData, idx) => pageComponents(pageData, idx === pageContent.length - 1)).flat()],
             footers: {
                 default: new Footer({
                     children: [
