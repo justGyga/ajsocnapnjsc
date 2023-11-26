@@ -17,7 +17,6 @@ import {
     WidthType
 } from "docx";
 import { readFileSync, writeFileSync } from "fs";
-import _ from "lodash";
 import pageContent from "./content.js";
 
 const header = new Paragraph({
@@ -139,7 +138,15 @@ const minerInfoTable = (data) => {
                 },
                 children: [
                     new TableCell({
-                        children: [underTable(_.pick(data, "id", "serialNumber", "mac", "model"))],
+                        children: [
+                            cellName(`Miner №${data.id}`),
+                            cellName("Serial Number"),
+                            new Paragraph(data.serialNumber),
+                            cellName("MAC-Address"),
+                            new Paragraph(data.mac),
+                            cellName("Model"),
+                            new Paragraph(data.model)
+                        ],
                         width: { size: 50, type: WidthType.PERCENTAGE }
                     }),
                     new TableCell({

@@ -17,6 +17,7 @@ import {
     WidthType
 } from "docx";
 import { readFileSync, writeFileSync } from "fs";
+import _ from "lodash";
 import pageContent from "./content.js";
 
 class DocumentConstructor {
@@ -116,70 +117,79 @@ class DocumentConstructor {
         });
     }
 
+    static #subTable(data) {
+        return new Table({
+            width: {
+                size: 100,
+                type: WidthType.PERCENTAGE
+            },
+            rows: [
+                new TableRow({
+                    height: { rule: HeightRule.EXACT, value: 300 },
+                    children: [
+                        new TableCell({
+                            children: [DocumentConstructor.#cellName(`Miner №${data.id}`)],
+                            verticalAlign: VerticalAlign.CENTER,
+                            width: { size: 50, type: WidthType.PERCENTAGE }
+                        })
+                    ]
+                }),
+                new TableRow({
+                    height: { rule: HeightRule.EXACT, value: 570 },
+                    children: [
+                        new TableCell({
+                            children: [DocumentConstructor.#cellName("Serial Number"), new Paragraph(data.serialNumber)],
+                            verticalAlign: VerticalAlign.CENTER,
+                            width: { size: 50, type: WidthType.PERCENTAGE }
+                        })
+                    ]
+                }),
+                new TableRow({
+                    height: { rule: HeightRule.EXACT, value: 570 },
+                    children: [
+                        new TableCell({
+                            children: [DocumentConstructor.#cellName("MAC-Address"), new Paragraph(data.mac)],
+                            verticalAlign: VerticalAlign.CENTER,
+                            width: { size: 50, type: WidthType.PERCENTAGE }
+                        })
+                    ]
+                }),
+                new TableRow({
+                    height: { rule: HeightRule.EXACT, value: 570 },
+                    children: [
+                        new TableCell({
+                            children: [DocumentConstructor.#cellName("Model"), new Paragraph(data.model)],
+                            verticalAlign: VerticalAlign.CENTER,
+                            width: { size: 50, type: WidthType.PERCENTAGE }
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+
     static #minerInfoTable(data) {
         return new Table({
             rows: [
                 new TableRow({
                     children: [
                         new TableCell({
-                            children: [
-                                DocumentConstructor.#cellName(`Miner №${data.id}`),
-                                DocumentConstructor.#cellName("Serial Number"),
-                                new Paragraph(data.serialNumber),
-                                DocumentConstructor.#cellName("MAC-Address"),
-                                new Paragraph(data.mac),
-                                DocumentConstructor.#cellName("Model"),
-                                new Paragraph(data.model)
-                            ],
+                            children: [DocumentConstructor.#subTable(_.pick(data, "id", "serialNumber", "mac", "model"))],
                             verticalAlign: VerticalAlign.CENTER,
-                            width: { size: 50, type: WidthType.PERCENTAGE }
+                            width: { size: 25, type: WidthType.PERCENTAGE }
                         }),
-                        // new TableCell({
-                        //     children: [DocumentConstructor.#cellName(`Miner №${data.id}`)],
-                        //     verticalAlign: VerticalAlign.CENTER,
-                        //     width: { size: 50, type: WidthType.PERCENTAGE }
-                        // }),
                         new TableCell({
                             children: DocumentConstructor.#cellPhotoContent(data.photos[0]),
-                            // rowSpan: 4,
                             verticalAlign: VerticalAlign.CENTER,
                             width: { size: 25, type: WidthType.PERCENTAGE }
                         }),
                         new TableCell({
                             children: DocumentConstructor.#cellPhotoContent(data.photos[1]),
-                            // rowSpan: 4,
                             verticalAlign: VerticalAlign.CENTER,
                             width: { size: 25, type: WidthType.PERCENTAGE }
                         })
                     ]
                 }),
-                // new TableRow({
-                //     children: [
-                //         new TableCell({
-                //             children: [DocumentConstructor.#cellName("Serial Number"), new Paragraph(data.serialNumber)],
-                //             verticalAlign: VerticalAlign.CENTER,
-                //             width: { size: 50, type: WidthType.PERCENTAGE }
-                //         })
-                //     ]
-                // }),
-                // new TableRow({
-                //     children: [
-                //         new TableCell({
-                //             children: [DocumentConstructor.#cellName("MAC-Address"), new Paragraph(data.mac)],
-                //             verticalAlign: VerticalAlign.CENTER,
-                //             width: { size: 50, type: WidthType.PERCENTAGE }
-                //         })
-                //     ]
-                // }),
-                // new TableRow({
-                //     children: [
-                //         new TableCell({
-                //             children: [DocumentConstructor.#cellName("Model"), new Paragraph(data.model)],
-                //             verticalAlign: VerticalAlign.CENTER,
-                //             width: { size: 50, type: WidthType.PERCENTAGE }
-                //         })
-                //     ]
-                // }),
                 new TableRow({
                     children: [
                         new TableCell({
@@ -189,13 +199,11 @@ class DocumentConstructor {
                         }),
                         new TableCell({
                             children: DocumentConstructor.#cellPhotoContent(data.photos[2]),
-                            rowSpan: 3,
                             verticalAlign: VerticalAlign.CENTER,
                             width: { size: 25, type: WidthType.PERCENTAGE }
                         }),
                         new TableCell({
                             children: DocumentConstructor.#cellPhotoContent(data.photos[3]),
-                            rowSpan: 3,
                             verticalAlign: VerticalAlign.CENTER,
                             width: { size: 25, type: WidthType.PERCENTAGE }
                         })
@@ -303,5 +311,5 @@ class DocumentConstructor {
 const doc = DocumentConstructor.generateDocument(pageContent);
 
 Packer.toBuffer(doc).then((buffer) => {
-    writeFileSync("output.docx", buffer);
+    writeFileSync("exp1.docx", buffer);
 });
