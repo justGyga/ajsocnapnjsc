@@ -122,12 +122,26 @@ class DocumentConstructor {
                 new TableRow({
                     children: [
                         new TableCell({
+                            margins: {
+                                bottom: 100
+                            },
                             children: [
-                                DocumentConstructor.#cellName(`Miner №${data.id}`),
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: `Miner №${data.id}`,
+                                            bold: true,
+                                            size: "12pt",
+                                            font: "Times New Roman"
+                                        })
+                                    ],
+                                    spacing: { after: 100 }
+                                }),
+                                // DocumentConstructor.#cellName(`Miner №${data.id}`),
                                 DocumentConstructor.#cellName("Serial Number"),
-                                new Paragraph(data.serialNumber),
+                                new Paragraph({ text: data.serialNumber, spacing: { after: 100 } }),
                                 DocumentConstructor.#cellName("MAC-Address"),
-                                new Paragraph(data.mac),
+                                new Paragraph({ text: data.mac, spacing: { after: 100 } }),
                                 DocumentConstructor.#cellName("Model"),
                                 new Paragraph(data.model)
                             ],
